@@ -1,5 +1,4 @@
 import streamlit as st
-from streamlit_extras.add_vertical_space import add_vertical_space
 from PyPDF2 import PdfReader
 from text_splitter import split_text
 from embeddings import get_embeddings
@@ -67,11 +66,14 @@ class PDFChatApplication:
 
     def handle_user_input(self, user_input):
         try:
-            answer = get_answer(user_input, st.session_state.vector_store)
-            st.session_state['history'].append((HumanMessage(content=user_input)))
-            st.session_state['history'].append((AIMessage(content=answer)))
+            if 'vector_store' in st.session_state:
+                answer = get_answer(user_input, st.session_state['vector_store'])
+                st.session_state['history'].append((HumanMessage(content=user_input)))
+                st.session_state['history'].append((AIMessage(content=answer)))
 
-            self.display_chat_history(st.session_state['history'][-2:])
+                self.display_chat_history(st.session_state['history'][-2:])
+            else:
+                self.show_error_message('There is no data.')
         except AttributeError as e:
             self.show_error_message('Please upload a PDF file.')
 

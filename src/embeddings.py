@@ -1,9 +1,8 @@
-from langchain_huggingface import HuggingFaceEmbeddings
-import torch
+# from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_cohere import CohereEmbeddings
 
 def get_embeddings():
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    device = "cpu"
-    model_name = "sentence-transformers/all-mpnet-base-v2"
-    return HuggingFaceEmbeddings(model_name=model_name, model_kwargs={"device": device})
+    #model_name = "sentence-transformers/all-mpnet-base-v2"
+    model_name = "embed-english-v3.0"
+    return CohereEmbeddings(model=model_name)
 
