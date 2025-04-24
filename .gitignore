@@ -3,6 +3,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+chroma_db/
+
 .idea/
 chroma/
 logs.txt
