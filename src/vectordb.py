@@ -1,6 +1,6 @@
-from langchain_chroma import Chroma
+# from langchain_chroma import Chroma
 from langchain_core.documents import Document
-import chromadb
+# import chromadb
 import faiss
 from langchain_community.docstore.in_memory import InMemoryDocstore
 from langchain_community.vectorstores import FAISS
