@@ -1,14 +1,15 @@
 import streamlit as st
+from streamlit_extras.add_vertical_space import add_vertical_space
 from PyPDF2 import PdfReader
 from text_splitter import split_text
 from embeddings import get_embeddings
 from vectordb import get_vector_store
 from logger import load_logger
-from response import get_answer, get_answer_without_context
+from response import get_answer
 from langchain_core.messages import AIMessage, HumanMessage
 import time
 import logging
-from streamlit_extras.add_vertical_space import add_vertical_space
+
 class PDFChatApplication:
     """
     The PDFChatApplication class enables users to interact with PDF documents through a chat interface.
@@ -29,7 +30,6 @@ class PDFChatApplication:
         """Initialize session state variables."""
         if 'history' not in st.session_state:
             st.session_state['history'] = []
-        st.session_state['use_doc'] = False
 
     def process_pdf(self, pdf_file):
         text = self.extract_text_from_pdf(pdf_file)
@@ -50,13 +50,8 @@ class PDFChatApplication:
             st.title('Chat with PDF')
             pdf = st.file_uploader('Upload your PDF file', type='pdf')
 
-            on = st.toggle("Use files")
-            if on:
-                st.session_state['use_doc'] = True
             if pdf:
                 self.process_pdf(pdf)
-
-
 
     def display_chat_history(self, history):
         """Display all messages from chat history."""
@@ -72,23 +67,16 @@ class PDFChatApplication:
 
     def handle_user_input(self, user_input):
         try:
-            if 'vector_store' in st.session_state and st.session_state['use_doc']:
-                answer = get_answer(user_input, st.session_state['vector_store'], st.session_state['history'])
-                st.session_state['history'].append((HumanMessage(content=user_input)))
-                st.session_state['history'].append((AIMessage(content=answer)))
+            answer = get_answer(user_input, st.session_state.vector_store)
+            st.session_state['history'].append((HumanMessage(content=user_input)))
+            st.session_state['history'].append((AIMessage(content=answer)))
 
-                self.display_chat_history(st.session_state['history'][-2:])
-            else:
-                answer = get_answer_without_context(user_input, st.session_state['history'])
-                st.session_state['history'].append((HumanMessage(content=user_input)))
-                st.session_state['history'].append((AIMessage(content=answer)))
-                self.display_chat_history(st.session_state['history'][-2:])
+            self.display_chat_history(st.session_state['history'][-2:])
         except AttributeError as e:
             self.show_error_message('Please upload a PDF file.')
 
     def run(self):
         st.title('What can I help with?')
-
         user_input = st.chat_input('Ask question about your PDF file.')
         self.display_chat_history(st.session_state['history'])
 
