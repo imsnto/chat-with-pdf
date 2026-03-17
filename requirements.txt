@@ -105,7 +105,7 @@ plotly==6.0.1
 posthog==3.25.0
 prometheus_client==0.21.1
 propcache==0.3.1
-protobuf==5.29.4
+protobuf==5.29.5
 pyarrow==19.0.1
 pyasn1==0.6.1
 pyasn1_modules==0.4.2
